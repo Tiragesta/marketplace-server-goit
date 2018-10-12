@@ -2,7 +2,7 @@ const mainRoute = require('./main/main');
 const getProducts = require('./products/getProducts');
 
 const getProductById = require('./products/getProductById');
-const createProduct = require('./products/productsRoute');
+const createProduct = require('./products/productCreate');
 const getUser = require('./users/getUser');
 const createUser = require('./users/createUser');
 
@@ -12,6 +12,7 @@ const router = {
   '/product/create': createProduct,
   '/user': getUser,
   '/user/create': createUser,
+  
   default: mainRoute
 };
 

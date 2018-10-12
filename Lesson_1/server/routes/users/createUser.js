@@ -1,17 +1,15 @@
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
+const url = require('url');
 
-const usersFolder = path.resolve(__dirname, '../../../', 'data');
+const usersFolder = path.resolve(__dirname, '../../', 'data/users');
 
-const writeFile = util.promisify(fs.writeFile);
-
-const saveNewUser = (fileName, data) => {
+const saveNewUser = (fileName, data, cb) => {
   const src = path.resolve(usersFolder, fileName + '.json');
-  const dataStr = JSON.stringify(data);
+  fs.writeFile(src, JSON.stringify(data), cb);
 
   // returning promise
-  return writeFile(src, dataStr);
+  
 };
 
 const createUser = (request, response) => {
@@ -21,18 +19,20 @@ const createUser = (request, response) => {
     const data = Buffer.concat(body).toString();
     const userData = Object.assign({}, JSON.parse(data), { id: Date.now() });
 
-    const fileName = userData.userName.toLowerCase() + userData.id;
+    const fileName = userData.name.toLowerCase() + userData.id;
 
-    const sendResponse = () => {
+    saveNewUser(fileName, userData,() => {
       response.writeHead(200, {"Content-Type": "application/json"});
-      response.write(JSON.stringify(userData));
+      response.write(JSON.stringify({
+        "status": "success",
+                "user": {
+                    "name": userData.name,
+                    "phone": userData.phone
+        }
+      }));
       response.end();
-    };
-
-    saveNewUser(fileName, userData)
-      .then(sendResponse)
-      .catch(console.log);
-  };
+  });
+};
 
   request
     .on('data', (chunk) => {
@@ -42,3 +42,6 @@ const createUser = (request, response) => {
 };
 
 module.exports = createUser;
+
+
+
