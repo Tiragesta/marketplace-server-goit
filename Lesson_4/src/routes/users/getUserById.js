@@ -1,20 +1,21 @@
 const usersSchema = require('../../models/users/usersSchema');
 
-const getUserById = (request, response) => {
-    const id = request.params.id;
-    const sendResponse = ([user, product]) => {
-      response.status(200);
-      response.json(user);
-    };
+const getUserById = (req, res) => {
+
+    usersSchema.findById(req.params.id).then(user => {
+      if (user) {
+        res.json(user)
+      }
+      else {
+        res.status(404);
+        res.json(
+            {message: `Requested entity ${req.params.id} was not found`});
+      }
+    }).catch(err => {
+      res.status(500);
+      res.json({error: err})
+    });
   
-    const findUser = usersSchema.findById(id);
-    const findProduct = Product.findById(id);
-  
-    Promise.all([findUser, findProduct])
-      .then(sendResponse)
-      .catch(err => {
-        console.error(err)
-      });
   };
   
   module.exports = getUserById;
