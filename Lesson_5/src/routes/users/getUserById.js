@@ -4,7 +4,10 @@ const getUserById = (req, res) => {
 
     usersSchema.findById(req.params.id).then(user => {
       if (user) {
-        res.json(user)
+        res.json({
+          status: "success",
+          user
+        });
       }
       else {
         res.status(404);
